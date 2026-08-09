@@ -1,4 +1,4 @@
-module github.com/kazeburo/mackerel-plugin-linux-netdev
+module github.com/monitoring-forge/mackerel-plugin-linux-netdev
 
 go 1.25.0
 

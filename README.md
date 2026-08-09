@@ -7,7 +7,7 @@ Linux の `/proc/net/dev` を収集する Mackerel 用メトリックプラグ�
 以下のいずれかの方法でインストールしてください。
 
 - リリースページからバイナリをダウンロードする
-- `mkr plugin install kazeburo/mackerel-plugin-linux-netdev` を実行する
+- `mkr plugin install monitoring-forge/mackerel-plugin-linux-netdev` を実行する
 
 ## 使い方
 
