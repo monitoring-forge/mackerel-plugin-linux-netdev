@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.5](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.4...v0.0.5) - 2026-08-09
+
+- repository transfer to monitoring-forge by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/11
+
 ## [v0.0.4](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.3...v0.0.4) - 2026-08-09
 
 - Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/1
