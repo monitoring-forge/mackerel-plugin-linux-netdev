@@ -134,17 +134,19 @@ func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 
 	path := statFile()
 
-	defer func() {
-		err := writeStats(u.workDir, path, curMetrics)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
-		}
-	}()
-
 	if !fileExists(u.workDir, path) {
+		if err := writeStats(u.workDir, path, curMetrics); err != nil {
+			return map[string]float64{}, fmt.Errorf("failed to write initial stats: %w", err)
+		}
 		fmt.Fprintf(os.Stderr, "Notice: first time execution command\n")
 		return map[string]float64{}, nil
 	}
+
+	defer func() {
+		if err := writeStats(u.workDir, path, curMetrics); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+		}
+	}()
 
 	timeDiff, prevMetrics, err := readStats(u.workDir, path)
 	if err != nil {
