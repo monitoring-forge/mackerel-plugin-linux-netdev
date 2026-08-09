@@ -18,31 +18,33 @@ type LinuxNetDevPlugin struct {
 }
 
 func (u LinuxNetDevPlugin) GraphDefinition() map[string]mp.Graphs {
+	graphdef := func(label string, metrics ...mp.Metrics) mp.Graphs {
+		return mp.Graphs{
+			Label:   label,
+			Unit:    mp.UnitInteger,
+			Metrics: metrics,
+		}
+	}
+	metricsdef := func(name, label string) mp.Metrics {
+		return mp.Metrics{
+			Name:    name,
+			Label:   label,
+			Stacked: false,
+		}
+	}
 	return map[string]mp.Graphs{
-		"linux-netdev.errors.#": {
-			Label: "Linux NetDev errors per sec",
-			Unit:  mp.UnitInteger,
-			Metrics: []mp.Metrics{
-				{Name: "tx", Label: "transmit errors encountered", Stacked: false},
-				{Name: "rx", Label: "receive errors encountered", Stacked: false},
-			},
-		},
-		"linux-netdev.dropped.#": {
-			Label: "Linux NetDev dropped packets per sec",
-			Unit:  mp.UnitInteger,
-			Metrics: []mp.Metrics{
-				{Name: "tx", Label: "packets dropped while transmitting", Stacked: false},
-				{Name: "rx", Label: "packets dropped while receiving", Stacked: false},
-			},
-		},
-		"linux-netdev.pps.#": {
-			Label: "Linux NetDev packets per sec",
-			Unit:  mp.UnitInteger,
-			Metrics: []mp.Metrics{
-				{Name: "tx", Label: "packets transmitted", Stacked: false},
-				{Name: "rx", Label: "packets received", Stacked: false},
-			},
-		},
+		"linux-netdev.errors.#": graphdef("Linux NetDev errors per sec",
+			metricsdef("tx", "transmit errors encountered"),
+			metricsdef("rx", "receive errors encountered"),
+		),
+		"linux-netdev.dropped.#": graphdef("Linux NetDev dropped packets per sec",
+			metricsdef("tx", "packets dropped while transmitting"),
+			metricsdef("rx", "packets dropped while receiving"),
+		),
+		"linux-netdev.pps.#": graphdef("Linux NetDev packets per sec",
+			metricsdef("tx", "packets transmitted"),
+			metricsdef("rx", "packets received"),
+		),
 	}
 }
 

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/prometheus/procfs"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFileExists(t *testing.T) {
@@ -59,7 +60,7 @@ func TestWriteStatsAndReadStats(t *testing.T) {
 		},
 	}
 
-	if err := writeStats(dir, filename, metrics); err != nil {
+	if err := writeStats(dir, filename, metrics, time.Now().Add(-5*time.Second)); err != nil {
 		t.Fatalf("writeStats failed: %v", err)
 	}
 
@@ -100,6 +101,17 @@ func TestReadStatsInvalidJSON(t *testing.T) {
 	}
 }
 
+func writeJSONToFile(dir, filename string, data any) error {
+	file, err := os.Create(filepath.Join(dir, filename))
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	return encoder.Encode(data)
+}
+
 func TestReadStatsZeroTime(t *testing.T) {
 	dir := t.TempDir()
 	filename := "stats.json"
@@ -108,52 +120,27 @@ func TestReadStatsZeroTime(t *testing.T) {
 		Interfaces: map[string]procfs.NetDevLine{},
 		Time:       0,
 	}
+	err := writeJSONToFile(dir, filename, st)
+	require.NoError(t, err, "failed to write stats with zero time")
 
-	f, err := os.Create(filepath.Join(dir, filename))
-	if err != nil {
-		t.Fatalf("failed to create file: %v", err)
-	}
-	if err := json.NewEncoder(f).Encode(st); err != nil {
-		_ = f.Close()
-		t.Fatalf("failed to encode stats: %v", err)
-	}
-	if err := f.Close(); err != nil {
-		t.Fatalf("failed to close file: %v", err)
-	}
-
-	if _, _, err := readStats(dir, filename); err == nil {
-		t.Fatalf("expected readStats to fail with zero time")
-	}
+	_, _, err = readStats(dir, filename)
+	require.Error(t, err, "expected readStats to fail with zero time")
+	require.Contains(t, err.Error(), "failed to get previous time", "unexpected error message")
 }
 
 func TestReadStatsTooLongDuration(t *testing.T) {
 	dir := t.TempDir()
 	filename := "stats.json"
 
-	oldTooOldDuration := tooOldDuration
-	tooOldDuration = 1
-	t.Cleanup(func() {
-		tooOldDuration = oldTooOldDuration
-	})
-
 	st := stats{
 		Interfaces: map[string]procfs.NetDevLine{},
-		Time:       time.Now().Unix() - 10,
+		Time:       time.Now().Unix() - int64(tooOldDuration) - 10,
 	}
 
-	f, err := os.Create(filepath.Join(dir, filename))
-	if err != nil {
-		t.Fatalf("failed to create file: %v", err)
-	}
-	if err := json.NewEncoder(f).Encode(st); err != nil {
-		_ = f.Close()
-		t.Fatalf("failed to encode stats: %v", err)
-	}
-	if err := f.Close(); err != nil {
-		t.Fatalf("failed to close file: %v", err)
-	}
+	err := writeJSONToFile(dir, filename, st)
+	require.NoError(t, err, "failed to write stats with zero time")
 
-	if _, _, err := readStats(dir, filename); err == nil {
-		t.Fatalf("expected readStats to fail for too old stats")
-	}
+	_, _, err = readStats(dir, filename)
+	require.Error(t, err, "expected readStats to fail for too old stats")
+	require.Contains(t, err.Error(), "too long duration", "unexpected error message")
 }

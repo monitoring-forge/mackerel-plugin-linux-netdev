@@ -32,7 +32,7 @@ type stats struct {
 	Time       int64                        `json:"time"`
 }
 
-func writeStats(dir, filename string, st map[string]procfs.NetDevLine) error {
+func writeStats(dir, filename string, st map[string]procfs.NetDevLine, t ...time.Time) error {
 	newFile, err := os.CreateTemp(dir, "mackerel-plugin-linux-netdev-")
 	if err != nil {
 		return err
@@ -45,10 +45,14 @@ func writeStats(dir, filename string, st map[string]procfs.NetDevLine) error {
 	}()
 
 	je := json.NewEncoder(newFile)
-	err = je.Encode(stats{
+	s := stats{
 		Interfaces: st,
 		Time:       time.Now().Unix(),
-	})
+	}
+	if len(t) > 0 {
+		s.Time = t[0].Unix()
+	}
+	err = je.Encode(s)
 	if err != nil {
 		_ = newFile.Close()
 		return err
