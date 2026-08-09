@@ -2,24 +2,13 @@ VERSION=0.0.3
 LDFLAGS=-ldflags "-w -s -X main.version=${VERSION}"
 all: mackerel-plugin-linux-netdev
 
-.PHONY: mackerel-plugin-linux-process-status
+.PHONY: mackerel-plugin-linux-netdev linux check
 
-mackerel-plugin-linux-netdev: main.go
+mackerel-plugin-linux-netdev: *.go
 	go build $(LDFLAGS) -o mackerel-plugin-linux-netdev
 
-linux: main.go
+linux: *.go
 	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o mackerel-plugin-linux-netdev
 
-fmt:
-	go fmt ./...
-
 check:
-	go test ./...
-
-clean:
-	rm -rf mackerel-plugin-linux-netdev
-
-tag:
-	git tag v${VERSION}
-	git push origin v${VERSION}
-	git push origin main
+	go test -v ./...
