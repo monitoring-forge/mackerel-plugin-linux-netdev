@@ -58,7 +58,11 @@ func _main() int {
 	}
 
 	if opt.IgnoreInterfaces != "" {
-		opt.ignoreInterfacesRegexp = regexp.MustCompile(opt.IgnoreInterfaces)
+		opt.ignoreInterfacesRegexp, err = regexp.Compile(opt.IgnoreInterfaces)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "invalid ignore-interfaces regexp: %v\n", err)
+			return UNKNOWN
+		}
 	}
 
 	u := LinuxNetDevPlugin{

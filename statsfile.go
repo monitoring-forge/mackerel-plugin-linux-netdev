@@ -81,6 +81,9 @@ func readStats(dir, filename string) (float64, map[string]procfs.NetDevLine, err
 	}
 	n := time.Now().Unix()
 	timeDiff := float64(n - st.Time)
+	if timeDiff <= 0 {
+		return 0, nil, fmt.Errorf("invalid elapsed time")
+	}
 	if timeDiff > tooOldDuration {
 		return 0, nil, fmt.Errorf("too long duration")
 	}

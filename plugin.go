@@ -75,7 +75,10 @@ func (u LinuxNetDevPlugin) interfaceMetricsFS(mountPoint string) (map[string]pro
 }
 
 func calcdiff(cur, prev uint64) float64 {
-	return max(float64(cur-prev), 0.0)
+	if cur < prev {
+		return 0
+	}
+	return float64(cur - prev)
 }
 
 func (u LinuxNetDevPlugin) calcMetrics(timeDiff float64, curMetrics, prevMetrics map[string]procfs.NetDevLine) map[string]float64 {
