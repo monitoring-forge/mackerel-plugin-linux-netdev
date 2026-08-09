@@ -1,12 +1,15 @@
 module github.com/kazeburo/mackerel-plugin-linux-netdev
 
-go 1.17
+go 1.25.0
 
 require (
-	github.com/jessevdk/go-flags v1.5.0
-	github.com/mackerelio/go-mackerel-plugin v0.1.2
-	github.com/mackerelio/golib v1.2.0
-	github.com/prometheus/procfs v0.7.3
+	github.com/jessevdk/go-flags v1.6.1
+	github.com/mackerelio/go-mackerel-plugin v0.1.6
+	github.com/mackerelio/golib v1.2.2
+	github.com/prometheus/procfs v0.21.1
 )
 
-require golang.org/x/sys v0.0.0-20211020174200-9d6173849985 // indirect
+require (
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
+)
