@@ -150,7 +150,10 @@ func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 
 	timeDiff, prevMetrics, err := readStats(u.workDir, path)
 	if err != nil {
-		return map[string]float64{}, err
+		return map[string]float64{}, fmt.Errorf("failed to read previous stats: %w", err)
+	}
+	if prevMetrics == nil {
+		return map[string]float64{}, fmt.Errorf("previous stats contain no interfaces")
 	}
 	res := u.calcMetrics(timeDiff, curMetrics, prevMetrics)
 
