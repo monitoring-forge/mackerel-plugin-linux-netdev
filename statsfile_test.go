@@ -13,23 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestFileExists(t *testing.T) {
-	dir := t.TempDir()
-	filename := "stats.json"
-
-	if fileExists(dir, filename) {
-		t.Fatalf("file should not exist: %s", filename)
-	}
-
-	if err := os.WriteFile(filepath.Join(dir, filename), []byte("{}"), 0o600); err != nil {
-		t.Fatalf("failed to create file: %v", err)
-	}
-
-	if !fileExists(dir, filename) {
-		t.Fatalf("file should exist: %s", filename)
-	}
-}
-
 func TestStatFile(t *testing.T) {
 	name := statFile()
 	if !strings.HasPrefix(name, "mackerel-plugin-linux-netdev-") {

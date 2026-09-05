@@ -1,21 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
-	"os"
 	"os/user"
-	"path/filepath"
 	"time"
 
+	"github.com/monitoring-forge/saferio"
 	"github.com/prometheus/procfs"
 )
-
-func fileExists(dir, filename string) bool {
-	_, err := os.Stat(filepath.Join(dir, filename))
-	return err == nil
-}
 
 func statFile() string {
 	curUser, _ := user.Current()
@@ -33,18 +25,6 @@ type stats struct {
 }
 
 func writeStats(dir, filename string, st map[string]procfs.NetDevLine, t ...time.Time) error {
-	newFile, err := os.CreateTemp(dir, "mackerel-plugin-linux-netdev-")
-	if err != nil {
-		return err
-	}
-	defer func() {
-		errRemove := os.Remove(newFile.Name())
-		if errRemove != nil && !os.IsNotExist(errRemove) {
-			log.Printf("Failed to remove temporary file: %s, error: %v", newFile.Name(), errRemove)
-		}
-	}()
-
-	je := json.NewEncoder(newFile)
 	s := stats{
 		Interfaces: st,
 		Time:       time.Now().Unix(),
@@ -52,31 +32,12 @@ func writeStats(dir, filename string, st map[string]procfs.NetDevLine, t ...time
 	if len(t) > 0 {
 		s.Time = t[0].Unix()
 	}
-	err = je.Encode(s)
-	if err != nil {
-		_ = newFile.Close()
-		return err
-	}
-
-	err = newFile.Close()
-	if err != nil {
-		return err
-	}
-
-	return os.Rename(newFile.Name(), filepath.Join(dir, filename))
+	return saferio.WriteJSON(dir, filename, s)
 }
 
 func readStats(dir, filename string) (float64, map[string]procfs.NetDevLine, error) {
 	st := stats{}
-	file, err := openRD(filepath.Join(dir, filename))
-	if err != nil {
-		return 0, nil, err
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&st)
-	if err != nil {
+	if err := saferio.ReadJSON(dir, filename, &st); err != nil {
 		return 0, nil, err
 	}
 

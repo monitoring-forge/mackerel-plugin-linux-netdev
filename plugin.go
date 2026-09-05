@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/monitoring-forge/saferio"
 	"github.com/prometheus/procfs"
 )
 
@@ -134,7 +135,7 @@ func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 
 	path := statFile()
 
-	if !fileExists(u.workDir, path) {
+	if !saferio.FileExists(u.workDir, path) {
 		if err := writeStats(u.workDir, path, curMetrics); err != nil {
 			return map[string]float64{}, fmt.Errorf("failed to write initial stats: %w", err)
 		}
