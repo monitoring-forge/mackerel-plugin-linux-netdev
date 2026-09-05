@@ -23,7 +23,7 @@ func (opt *Opt) Run(_ []string) (any, int) {
 		var err error
 		opt.ignoreInterfacesRegexp, err = regexp.Compile(opt.IgnoreInterfaces)
 		if err != nil {
-			return fmt.Errorf("invalid ignore-interfaces regexp: %v", err), flagrun.UNKNOWN
+			return fmt.Errorf("invalid ignore-interfaces regexp: %w", err), flagrun.UNKNOWN
 		}
 	}
 
