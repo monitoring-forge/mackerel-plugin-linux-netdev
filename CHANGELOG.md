@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.0.6](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.5...v0.0.6) - 2026-09-05
+
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/13
+- go: bump the dependencies group across 1 directory with 3 updates by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/17
+- ci: bump Songmu/tagpr from 1.20.1 to 1.20.2 in the dependencies group across 1 directory by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/18
+- feat: update dependencies and refactor file handling by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/19
+
 ## [v0.0.5](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.4...v0.0.5) - 2026-08-09
 
 - repository transfer to monitoring-forge by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/11
