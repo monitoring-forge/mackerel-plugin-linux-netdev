@@ -20,7 +20,8 @@ type Opt struct {
 
 func (opt *Opt) Validate(_ []string) error {
 	if opt.IgnoreInterfaces != "" {
-		_, err := regexp.Compile(opt.IgnoreInterfaces)
+		var err error
+		opt.ignoreInterfacesRegexp, err = regexp.Compile(opt.IgnoreInterfaces)
 		if err != nil {
 			return fmt.Errorf("invalid ignore-interfaces regexp: %w", err)
 		}
