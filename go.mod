@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	github.com/monitoring-forge/flagrun v0.0.8
+	github.com/monitoring-forge/flagrun v0.0.9
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
