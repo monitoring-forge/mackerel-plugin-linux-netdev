@@ -18,15 +18,17 @@ type Opt struct {
 	ignoreInterfacesRegexp *regexp.Regexp
 }
 
-func (opt *Opt) Run(_ []string) (any, int) {
+func (opt *Opt) Validate(_ []string) error {
 	if opt.IgnoreInterfaces != "" {
-		var err error
-		opt.ignoreInterfacesRegexp, err = regexp.Compile(opt.IgnoreInterfaces)
+		_, err := regexp.Compile(opt.IgnoreInterfaces)
 		if err != nil {
-			return fmt.Errorf("invalid ignore-interfaces regexp: %w", err), flagrun.UNKNOWN
+			return fmt.Errorf("invalid ignore-interfaces regexp: %w", err)
 		}
 	}
+	return nil
+}
 
+func (opt *Opt) Run(_ []string) {
 	u := LinuxNetDevPlugin{
 		ignoreInterfaces:       opt.IgnoreInterfaces,
 		ignoreInterfacesRegexp: opt.ignoreInterfacesRegexp,
@@ -34,10 +36,9 @@ func (opt *Opt) Run(_ []string) (any, int) {
 	}
 	plugin := mp.NewMackerelPlugin(u)
 	plugin.Run()
-	return "", flagrun.OK
-
 }
 
 func main() {
-	os.Exit(flagrun.Go(&Opt{}, flagrun.Version(version)))
+	opt := &Opt{}
+	os.Exit(flagrun.Ship(opt, flagrun.Version(version), flagrun.Validator(opt.Validate)))
 }
