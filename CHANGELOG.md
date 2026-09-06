@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.7](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.6...v0.0.7) - 2026-09-06
+
+- use new flagrun validator by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/20
+
 ## [v0.0.6](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.5...v0.0.6) - 2026-09-05
 
 - Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/13
