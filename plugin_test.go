@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 	"path/filepath"
-	"regexp"
 	"testing"
 
+	"github.com/monitoring-forge/flagrun"
 	"github.com/prometheus/procfs"
 )
 
@@ -32,8 +32,8 @@ func TestInterfaceMetricsFS(t *testing.T) {
 	procDir := t.TempDir()
 	writeNetDev(t, procDir, sampleNetDev)
 
-	p := LinuxNetDevPlugin{}
-	got, err := p.interfaceMetricsFS(procDir)
+	opt := &Opt{}
+	got, err := opt.interfaceMetricsFS(procDir)
 	if err != nil {
 		t.Fatalf("interfaceMetricsFS failed: %v", err)
 	}
@@ -67,12 +67,15 @@ func TestInterfaceMetricsFSIgnoreInterfaces(t *testing.T) {
 	procDir := t.TempDir()
 	writeNetDev(t, procDir, sampleNetDev)
 
-	re := regexp.MustCompile(`^eth0$`)
-	p := LinuxNetDevPlugin{
-		ignoreInterfaces:       "^eth0$",
-		ignoreInterfacesRegexp: re,
+	re := flagrun.Re{}
+	err := re.UnmarshalFlag("^eth0$")
+	if err != nil {
+		t.Fatalf("Failed to unmarshal flag: %v", err)
 	}
-	got, err := p.interfaceMetricsFS(procDir)
+	opt := &Opt{
+		IgnoreInterfaces: re,
+	}
+	got, err := opt.interfaceMetricsFS(procDir)
 	if err != nil {
 		t.Fatalf("interfaceMetricsFS failed: %v", err)
 	}
@@ -86,8 +89,8 @@ func TestInterfaceMetricsFSIgnoreInterfaces(t *testing.T) {
 }
 
 func TestInterfaceMetricsFSInvalidMountPoint(t *testing.T) {
-	p := LinuxNetDevPlugin{}
-	_, err := p.interfaceMetricsFS(filepath.Join(t.TempDir(), "nonexistent"))
+	opt := &Opt{}
+	_, err := opt.interfaceMetricsFS(filepath.Join(t.TempDir(), "nonexistent"))
 	if err == nil {
 		t.Fatalf("expected error for nonexistent mount point")
 	}
@@ -135,8 +138,8 @@ func TestCalcMetrics(t *testing.T) {
 		},
 	}
 
-	p := LinuxNetDevPlugin{}
-	res := p.calcMetrics(10, cur, prev)
+	opt := &Opt{}
+	res := opt.calcMetrics(10, cur, prev)
 
 	want := map[string]float64{
 		"linux-netdev.errors.eth0.tx":  0.5,

@@ -5,18 +5,19 @@ go 1.26.0
 require (
 	github.com/mackerelio/go-mackerel-plugin v0.1.6
 	github.com/mackerelio/golib v1.2.2
-	github.com/monitoring-forge/saferio v0.0.3
-	github.com/prometheus/procfs v0.22.0
+	github.com/monitoring-forge/saferio v0.0.4
+	github.com/prometheus/procfs v0.23.0
 )
 
 require (
+	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/jessevdk/go-flags v1.6.1 // indirect
 	github.com/mackerelio/checkers v0.2.1 // indirect
-	go.yaml.in/yaml/v3 v3.0.5 // indirect
+	go.yaml.in/yaml/v3 v3.0.6 // indirect
 )
 
 require (
-	github.com/monitoring-forge/flagrun v0.0.10
+	github.com/monitoring-forge/flagrun v0.0.11
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
