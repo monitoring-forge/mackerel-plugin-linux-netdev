@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"regexp"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
 	"github.com/monitoring-forge/saferio"
@@ -12,13 +11,7 @@ import (
 
 var tooOldDuration = 600.0 // seconds
 
-type LinuxNetDevPlugin struct {
-	ignoreInterfaces       string
-	ignoreInterfacesRegexp *regexp.Regexp
-	workDir                string
-}
-
-func (u LinuxNetDevPlugin) GraphDefinition() map[string]mp.Graphs {
+func (o *Opt) GraphDefinition() map[string]mp.Graphs {
 	graphdef := func(label string, metrics ...mp.Metrics) mp.Graphs {
 		return mp.Graphs{
 			Label:   label,
@@ -49,11 +42,11 @@ func (u LinuxNetDevPlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-func (u LinuxNetDevPlugin) interfaceMetrics() (map[string]procfs.NetDevLine, error) {
-	return u.interfaceMetricsFS("/proc")
+func (o *Opt) interfaceMetrics() (map[string]procfs.NetDevLine, error) {
+	return o.interfaceMetricsFS("/proc")
 }
 
-func (u LinuxNetDevPlugin) interfaceMetricsFS(mountPoint string) (map[string]procfs.NetDevLine, error) {
+func (o *Opt) interfaceMetricsFS(mountPoint string) (map[string]procfs.NetDevLine, error) {
 	res := map[string]procfs.NetDevLine{}
 	pfs, err := procfs.NewFS(mountPoint)
 	if err != nil {
@@ -68,7 +61,7 @@ func (u LinuxNetDevPlugin) interfaceMetricsFS(mountPoint string) (map[string]pro
 		if i.Name == "lo" {
 			continue
 		}
-		if u.ignoreInterfaces != "" && u.ignoreInterfacesRegexp.MatchString(i.Name) {
+		if o.IgnoreInterfaces.Present() && o.IgnoreInterfaces.Regexp().MatchString(i.Name) {
 			continue
 		}
 		cur[i.Name] = i
@@ -84,7 +77,7 @@ func calcdiff(cur, prev uint64) float64 {
 	return float64(cur - prev)
 }
 
-func (u LinuxNetDevPlugin) calcMetrics(timeDiff float64, curMetrics, prevMetrics map[string]procfs.NetDevLine) map[string]float64 {
+func (o *Opt) calcMetrics(timeDiff float64, curMetrics, prevMetrics map[string]procfs.NetDevLine) map[string]float64 {
 	res := map[string]float64{}
 	allTxErrors := 0.0
 	allTxDropped := 0.0
@@ -127,16 +120,16 @@ func (u LinuxNetDevPlugin) calcMetrics(timeDiff float64, curMetrics, prevMetrics
 	return res
 }
 
-func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
-	curMetrics, err := u.interfaceMetrics()
+func (o *Opt) FetchMetrics() (map[string]float64, error) {
+	curMetrics, err := o.interfaceMetrics()
 	if err != nil {
 		return map[string]float64{}, err
 	}
 
 	path := statFile()
 
-	if !saferio.FileExists(u.workDir, path) {
-		if err := writeStats(u.workDir, path, curMetrics); err != nil {
+	if !saferio.FileExists(o.workDir, path) {
+		if err := writeStats(o.workDir, path, curMetrics); err != nil {
 			return map[string]float64{}, fmt.Errorf("failed to write initial stats: %w", err)
 		}
 		fmt.Fprintf(os.Stderr, "Notice: first time execution command\n")
@@ -144,19 +137,19 @@ func (u LinuxNetDevPlugin) FetchMetrics() (map[string]float64, error) {
 	}
 
 	defer func() {
-		if err := writeStats(u.workDir, path, curMetrics); err != nil {
+		if err := writeStats(o.workDir, path, curMetrics); err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 		}
 	}()
 
-	timeDiff, prevMetrics, err := readStats(u.workDir, path)
+	timeDiff, prevMetrics, err := readStats(o.workDir, path)
 	if err != nil {
 		return map[string]float64{}, fmt.Errorf("failed to read previous stats: %w", err)
 	}
 	if prevMetrics == nil {
 		return map[string]float64{}, fmt.Errorf("previous stats contain no interfaces")
 	}
-	res := u.calcMetrics(timeDiff, curMetrics, prevMetrics)
+	res := o.calcMetrics(timeDiff, curMetrics, prevMetrics)
 
 	return res, nil
 }
