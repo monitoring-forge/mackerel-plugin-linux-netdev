@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.0.8](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.7...v0.0.8) - 2026-11-19
+
+- ci: bump Songmu/tagpr from 1.21.3 to 1.21.4 in the tagpr group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/35
+- ci: bump Songmu/tagpr from 1.21.4 to 1.22.0 in the tagpr group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/38
+- go: bump golang.org/x/sys from 0.49.0 to 0.50.0 in the dependencies group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/37
+
 ## [v0.0.7](https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/compare/v0.0.6...v0.0.7) - 2026-11-01
 
 - use new flagrun validator by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-netdev/pull/20
