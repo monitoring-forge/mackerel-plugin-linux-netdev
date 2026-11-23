@@ -20,5 +20,5 @@ require (
 	github.com/monitoring-forge/flagrun v0.0.11
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 )
